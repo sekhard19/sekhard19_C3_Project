@@ -7,8 +7,8 @@ public class Restaurant {
     private String location;
     public LocalTime openingTime;
     public LocalTime closingTime;
+    private List<Item> menu = new ArrayList<>();
     private List<Item> basket = new ArrayList<>();
-    private List<Item> menu = new ArrayList<Item>();
 
     public Restaurant(String name, String location, LocalTime openingTime, LocalTime closingTime) {
         this.name = name;
@@ -17,9 +17,12 @@ public class Restaurant {
         this.closingTime = closingTime;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public boolean isRestaurantOpen() {
-        LocalTime currentTime1= getCurrentTime();
-        return ( (currentTime1.compareTo(openingTime )>0 && currentTime1.compareTo(closingTime)<0)|| currentTime1.compareTo(openingTime )==0 || currentTime1.compareTo(closingTime)==0);
+        return getCurrentTime().isAfter(openingTime) && getCurrentTime().isBefore(closingTime);
     }
 
     public LocalTime getCurrentTime(){ return  LocalTime.now(); }
@@ -28,41 +31,51 @@ public class Restaurant {
         return menu;
     }
 
-    private Item findItemByName(String itemName){
+    private Item findItemByName(String itemName) throws ItemNotFoundException{
         for(Item item: menu) {
             if(item.getName().equals(itemName))
                 return item;
         }
-        return null;
+        throw new ItemNotFoundException(itemName);
     }
 
     public void addToMenu(String name, int price) {
         Item newItem = new Item(name,price);
         menu.add(newItem);
     }
-    
+
     public void removeFromMenu(String itemName) throws ItemNotFoundException {
-
         Item itemToBeRemoved = findItemByName(itemName);
-        if (itemToBeRemoved == null)
-            throw new ItemNotFoundException(itemName);
-
         menu.remove(itemToBeRemoved);
     }
+
     public void displayDetails(){
         System.out.println("Restaurant:"+ name + "\n"
                 +"Location:"+ location + "\n"
                 +"Opening time:"+ openingTime +"\n"
                 +"Closing time:"+ closingTime +"\n"
                 +"Menu:"+"\n"+getMenu());
-
     }
 
-    public String getName() {
-        return name;
+    public int getBasketTotal() {
+        int total = 0;
+        for (Item item : basket) {
+            total += item.getPrice();
+        }
+        return total;
     }
 
+    public void addToBasket(String ... itemNames) throws ItemNotFoundException {
+        for (String itemName : itemNames) {
+            Item itemToBeAdded = findItemByName(itemName);
+            basket.add(itemToBeAdded);
+        }
+    }
 
-
-
+    public void removeFromBasket(String ... itemNames) throws ItemNotFoundException{
+        for (String itemName : itemNames) {
+            Item itemToBeRemoved = findItemByName(itemName);
+            basket.remove(itemToBeRemoved);
+        }
+    }
 }

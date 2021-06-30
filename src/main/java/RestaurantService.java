@@ -5,17 +5,13 @@ import java.util.List;
 public class RestaurantService {
     private static List<Restaurant> restaurants = new ArrayList<>();
 
-    public Restaurant findRestaurantByName(String restaurantName) throws restaurantNotFoundException{
-        boolean isAvailable=false;
-        for(Restaurant availableRestaurant:  getRestaurants()) {
-            if(availableRestaurant.getName().equals(restaurantName)) {
-                isAvailable=true;
-                return availableRestaurant;
+    public Restaurant findRestaurantByName(String restaurantName) throws RestaurantNotFoundException {
+        for (Restaurant restaurant : restaurants) {
+            if(restaurant.getName().equals(restaurantName)) {
+                return restaurant;
             }
         }
-        if(isAvailable==false)
-            throw  new restaurantNotFoundException("The Restaurant is not found with the given name="+restaurantName);
-       return null;
+        throw new RestaurantNotFoundException(restaurantName);
     }
 
 
@@ -25,7 +21,7 @@ public class RestaurantService {
         return newRestaurant;
     }
 
-    public Restaurant removeRestaurant(String restaurantName) throws restaurantNotFoundException {
+    public Restaurant removeRestaurant(String restaurantName) throws RestaurantNotFoundException {
         Restaurant restaurantToBeRemoved = findRestaurantByName(restaurantName);
         restaurants.remove(restaurantToBeRemoved);
         return restaurantToBeRemoved;
