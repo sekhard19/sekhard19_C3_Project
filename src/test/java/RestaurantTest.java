@@ -64,5 +64,50 @@ class RestaurantTest {
     }
     //<<<<<<<<<<<<<<<<<<<<<<<MENU>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+    //<<<<<<<<<<<<<<<<<<<<TOTALLING MENU>>>>>>>>>>>>>>>>>>>>>>>>>>
+    @Test
+    public void no_items_in_the_basket_should_return_0() {
+        int expectedTotal = restaurant.getBasketTotal();
+        assertEquals(expectedTotal, 0);
+    }
+
+    @Test
+    public void adding_sweet_corn_soup_to_basket_should_return_total_of_119() throws ItemNotFoundException{
+        restaurant.addToMenu("Sweet corn soup",119);
+        restaurant.addToBasket("Sweet corn soup");
+        int expectedTotal = restaurant.getBasketTotal();
+        assertEquals(expectedTotal, 119);
+    }
+
+    @Test
+    public void adding_sweet_corn_soup_and_vegetable_lasagne_to_basket_should_return_total_of_388() throws ItemNotFoundException{
+        restaurant.addToMenu("Sweet corn soup",119);
+        restaurant.addToMenu("Vegetable lasagne", 269);
+        restaurant.addToBasket("Sweet corn soup", "Vegetable lasagne");
+        int expectedTotal = restaurant.getBasketTotal();
+        assertEquals(expectedTotal, 388);
+    }
+
+    @Test
+    public void removing_sweet_corn_soup_from_basket_should_return_total_of_269() throws ItemNotFoundException{
+        restaurant.addToMenu("Sweet corn soup",119);
+        restaurant.addToMenu("Vegetable lasagne", 269);
+        restaurant.addToBasket("Sweet corn soup", "Vegetable lasagne");
+        restaurant.removeFromBasket("Sweet corn soup");
+        int expectedTotal = restaurant.getBasketTotal();
+        assertEquals(expectedTotal, 269);
+    }
+
+    @Test
+    public void removing_item_that_does_not_exist_from_basket_should_throw_exception() {
+        assertThrows(ItemNotFoundException.class,
+                ()->restaurant.removeFromBasket("French Fries"));
+    }
+
+    @Test
+    public void adding_item_to_basket_that_is_not_on_menu_should_throw_exception() {
+        assertThrows(ItemNotFoundException.class,
+                ()->restaurant.addToBasket("Sweet corn soup"));
+    }
 
 }
